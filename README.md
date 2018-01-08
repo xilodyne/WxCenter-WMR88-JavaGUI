@@ -1,4 +1,4 @@
-#Java GUI for Oregon Scientific WMR88 Weather Center
+# Java GUI for Oregon Scientific WMR88 Weather Center
 
 Displays data from the Oregon Scientific WMR88 Weather Center in applet (via tomcat server) or a stand-alone java app.
 
