@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!-- wxlogger.html 	K. J. Turner	18/02/13 -->
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+  <title>
+    Communications Utilities - WxLogger (Oregon Scientific Professional Weather
+    Station Logger)
+  </title>
+
+  <link rev="made" href="http://www.cs.stir.ac.uk/~kjt/"/>
+
+  <meta name="keywords"
+  content="Oregon Scientific Professional Weather Station WMR 88 100 180 WMR88 WMR100 WMR180"/>
+
+</head>
+
+<body background="parchment.gif">
+
+  <div style="text-align: center">
+    <h1>
+      WxLogger<br/>(Oregon Scientific Professional Weather Station Logger)
+    </h1>
+
+    <img alt="Weather Symbol" src="weather.gif" width="91" height="91"/>
+
+  </div>
+
+  <!--============== Description ==============-->
+
+  <h2>Description</h2>
+
+  <p>
+    This program is intended for logging the data transmitted by an Oregon
+    Scientific Professional Weather Station (model WMR180). The data is sent
+    over a USB link to a computer (desktop or embedded). The name
+    <var>WxLogger</var> derives from the common abbreviation WX for
+    &quot;weather conditions&quot;.
+  </p>
+
+  <p>
+    Oregon Scientific supply the <var>Virtual Weather Station</var> program.
+    Several other programs are also available such as <a
+    href="http://sandaysoft.com/products/cumulus/" target="_blank">Cumulus</a>
+    and <a href="http://wmrx00.sourceforge.net/" target="_blank">Weather Station
+    Data Logger</a>.
+  </p>
+
+  <p>
+    So why create yet another weather station program? I wished to use Java so
+    that <var>WxLogger</var> could run on a large variety of systems. I
+    needed only simple data logging, without more advanced features such as
+    graphical display or uploading data to a remote site. I also wanted to
+    create an open-source program that could be readily customised by others.
+  </p>
+
+  <p>
+    The weather station USB interface is treated as a HID (Human Interface
+    Device). <var>WxLogger</var> relies on JNI (Java Native Interface) code
+    provided by the <a href="http://code.google.com/p/javahidapi/"
+    target="_blank">JavaHIDAPI</a> project.
+  </p>
+
+  <p>
+    <var>WxLogger</var> has been run on Linux (ARM, 32-bit) and MS Windows
+    (XP/7, 32/64-bit), but should run on a number of other systems (Linux Intel
+    32/64-bit, MacOS Intel 32/64-bit). I am currently running
+    <var>WxLogger</var> on a <a href="http://www.raspberrypi.org/"
+    target="_blank">Raspberry Pi</a>.
+  </p>
+
+  <p>
+    Options for running the code include <a
+    href="http://www.oracle.com/technetwork/java/javase/downloads/"
+    target="_blank">Oracle Java</a> and <a href="http://openjdk.java.net/"
+    target="_blank">OpenJDK</a>.
+  </p>
+
+  <p>
+    The code is based on the discoveries by others of the weather station
+    protocol. See the <a href="wmr180.html">interface specification</a> for the
+    details. Although that work mostly concerns the WMR100, it appears to be
+    relevant to the WMR180 (and probably also the WMR88). <var>WxLogger</var>
+    will probably therefore work for all of these weather stations, though not
+    the WMR200.
+  </p>
+
+  <p>
+    The program is designed only for logging - not real-time display or data
+    upload. The author has created <a href="wxdisplay.html">WxDisplay</a> and <a
+    href="wxjsp.html">WxJSP</a> to display historical data using an applet.
+    Command-line scripts also allow data to be extracted in various ways.
+  </p>
+
+  <p>
+    The program tries to cope with some unusual situations that can arise. It is
+    possible, for example, to receive two messages for the same hour if the
+    radio clock corrects the time. On changing to or from daylight saving time,
+    the clock will go forward or back. This results in a missing hour of data or
+    a double hour of data respectively. The program logs the cumulative rainfall
+    each day. Since this relies on the cumulative rainfall since the weather
+    station rainfall memory was cleared, it is necessary to handle a clear while
+    the program is running.
+  </p>
+
+  <p>
+    The outdoor temperature/humidity sensor is normally the main one (channel
+    1). However, this data can instead be logged from an additional outdoor
+    sensor (channel 2, etc.).
+  </p>
+
+  <!--============== Customisation ==============-->
+
+  <h2>Customisation</h2>
+
+  <p>
+    If you can live with the program defaults, you just need a JVM (Java Virtual
+    Machine). If you wish to change the defaults or to alter the code, you also
+    need a JDK (Java Development Kit).
+  </p>
+
+  <p>
+    Customisation is possible by changing the following constants in the code
+    ("customisation" section):
+  </p>
+
+  <dl>
+
+    <dt><strong>ARCHIVE_PATH</strong></dt>
+    <dd>
+      directory path for archive files (default '/tmp', must not be '.', or end
+      with '/' or '\'); if empty, no archiving takes place (i.e. log files
+      remain in their original place)
+    </dd>
+
+    <dt><strong>BACKUP_LOG</strong></dt>
+    <dd>
+      when archiving, preserve the current day's log as 'LAST_DAY.DAT' (default
+      true, i.e. do backup); the last day's log file will be replaced if it
+      exists
+    </dd>
+
+    <dt><strong>DEGREE</strong></dt>
+    <dd>
+      degree symbol (default Unicode degree); this may need to be set to empty
+      if the console does not support Unicode
+    </dd>
+
+    <dt><strong>LOG_DEFAULT</strong></dt>
+    <dd>
+      default flags for log output as logical OR of individual log flags
+      (default hourly data, for 0 nothing, 1 USB data, 2 frame data, 4 sensor
+      data, 8 hourly data)
+    </dd>
+
+    <dt><strong>LOG_FILE</strong></dt>
+    <dd>
+      name of a log file to use, or empty to mean output to the console (default
+      empty)
+    </dd>
+
+    <dt><strong>LOG_INTERVAL</strong></dt>
+    <dd>
+      the number of minutes between log entries (default 15, i.e. 00/15/30/45
+      minutes past the hour); the value must be a submultiple of 60 (e.g. 10,
+      15, 20, 30)
+    </dd>
+
+    <dt><strong>OUTDOOR_SENSOR</strong></dt>
+    <dd>
+      outdoor temperature sensor to log (default 1)
+    </dd>
+
+  </dl>
+
+  <p>
+    Error messages and the following hourly summaries can appear in the log
+    output. Hourly figures are averages for the past hour, except for rainfall
+    which is cumulative. Indoor or outdoor sensor data is followed by '?' if
+    there is missing data for the corresponding sensor. Outdoor sensor data is
+    followed by '!' if the corresponding sensor battery is low.
+  </p>
+
+  <pre>
+    HH:MM  time
+    NN.N   wind speed
+    NNN    wind direction
+    NN.N   outdoor temperature
+    NN     outdoor humidity
+    NNNN   outdoor pressure
+    NN.N   outdoor rainfall total since midnight
+    NN     outdoor UV index
+  </pre>
+
+  <!--============== Installation ==============-->
+
+  <h2>Installation</h2>
+
+  <p>
+    As a convenience, interface code is included from <a
+    href="http://code.google.com/p/javahidapi/" target="_blank">JavaHIDAPI</a>
+    project.
+  </p>
+
+  <p>
+    The <var>WxLogger.java</var> code is provided in source form. This has been
+    pre-compiled for Java 6 along with the Java HID code into the JAR
+    <var>wxlogger.jar</var>. This is supported by the <var>hidapi</var> native
+    library. Find the appropriate library file under the <var>res</var>
+    directory and install it. On Windows, for example, this requires creating
+    <var>hidapi.dll</var> under <var>\Windows\system32</var>. On Linux, for
+    example, this requires creating <var>libhidapi.so</var> under
+    <var>/usr/lib</var>. Note that <var>WxLogger.java</var> refers to the
+    library as <var>hidapi</var> so any suffix like '-jni-32' must be omitted
+    in the installation name.
+  </p>
+
+  <!--============== Usage ==============-->
+
+  <h2>Usage</h2>
+
+  <p>
+    Run <var>WxLogger.java</var> as follows:
+  </p>
+
+  <pre>
+    java -cp lib/wxlogger.jar uk.ac.stir.cs.wx.WxLogger
+  </pre>
+
+  <p>
+    The program can be run interactively from a console. It can also be run as a
+    background service (Windows) or startup program (Unix).
+  </p>
+
+  <p>
+    A file for each day is created in the current directory with the name
+    'YYYYMMDD.DAT' (e.g. '20130131.DAT'). It contains the following fields
+    separated by one or more spaces. Values are calculated for each logging
+    interval, except rainfall which is totalled since the previous midnight.
+  </p>
+
+  <pre>
+    HH:MM:SS               time of log
+    NN.N NN.N NN.N         wind speed average/minimum/maximum (m/s)
+    NNN NNN NNN            wind direction average/minimum/maximum (deg from N)
+    NN.N NN.N NN.N         outdoor temperature average/minimum/maximum (C)
+    NN NN NN               outdoor humidity average/minimum/maximum (%)
+    NN.N NN.N NN.N         outdoor dewpoint average/minimum/maximum (C)
+    NNNN.N NNNN.N NNNN.N   indoor pressure average/minimum/maximum (mb)
+    NN.N NN.N NN.N         indoor temperature average/minimum/maximum (C)
+    NN NN NN               indoor humidity average/minimum/maximum (%)
+    NN                     rainfall total since midnight (mm)
+    NN.N NN.N NN.N         wind chill temperature average/minimum/maximum (C)
+    NN.N NN.N NN.N         indoor dewpoint average/minimum/maximum (C)
+    NN NN NN               UV index average/minimum/maximum (0 low, 6 high, ...)
+  </pre>
+
+  <p>
+    This format is compatible with that used by the original WeatherView
+    software supplied by Oregon Scientific, except that measurements finish with
+    an indoor dewpoint and a UV index. Another difference is that rainfall is
+    cumulative for each day since midnight. The log format could be customised
+    by changing method <var>logMeasures</var>.
+  </p>
+
+  <p>
+    The wind chill is normally calculated when an anemometer reading is
+    received. If an outdoor temperature has been received and the wind speed is
+    high enough, the wind chill is calculated from the North American/UK
+    formula. If an outdoor temperature has been received but the wind speed is
+    not high enough, the wind chill is set to the outdoor temperature. If an
+    outdoor temperature has not been received and the weather station wind chill
+    is invalid, the wind chill is set to zero (which may result in the first
+    such value being incorrect).
+
+  <p>
+    When the program runs interactively, entering '0' to '4' will change the
+    logging level from nothing to everything. Entering '.' twice in succession
+    will exit the program. Note that a keyboard entry must be followed by Enter
+    before it is processed. Keyboard entry is checked only every 10 to 20
+    seconds approximately (depending on the length of the main loop).
+  </p>
+
+  <p>
+    The separate program <var>wxmove</var> (a Perl script) is included to help
+    with moving data files from a memory stick or network drive to the hard disc
+    of another computer.
+  </p>
+
+  <!--============== Licence ==============-->
+
+  <h2>Licence</h2>
+
+  <p>
+    This program is free software. You can redistribute it and/or modify it
+    under the terms of the <a href="http://www.gnu.org/copyleft/gpl.html"
+    target="_blank">GNU General Public License</a> as published by the Free
+    Software Foundation - either version 2 of the License, or (at your option)
+    any later version.
+  </p>
+
+  <p>
+    This program is distributed in the hope that it will be useful but
+    <strong>without any warranty</strong>, without even the implied warranty
+    of <strong>merchantability</strong> or <strong>fitness for a particular
+    purpose</strong>. See the GNU General Public License for more details.
+  </p>
+
+  <form action='/cgi-bin/kjt/get-email' method='post'>
+
+    <p>
+      You may re-distribute this software provided you preserve this README
+      file. Bug reports should be sent to <input name='user' value='Ken Turner'
+      type='submit'/>, who would also appreciate receiving any corrections or
+      enhancements.
+    </p>
+
+  </form>
+
+  <!--============== History ==============-->
+
+  <h2>History</h2>
+
+  <p>
+    Version 1.0: First public release, Ken Turner,
+    18th February 2013
+  </p>
+
+</body>
+
+</html>
+
+

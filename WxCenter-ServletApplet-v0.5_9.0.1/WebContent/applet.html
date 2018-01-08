@@ -1,0 +1,49 @@
+<html>
+<head>
+<title>Casa Holiday Weather Center Applet</title>
+</head>
+<body bgcolor=white>
+
+<table border="0">
+<tr>
+
+<td>
+<h1>Casa Holiday Weather Center Applet</h1>
+<p>This application is displaying an Oregon Scientific WMR88 Weather Center.<br>
+It reads the WMR88 console using WxLogger <a href="http://www.cs.stir.ac.uk/~kjt/software/comms/wxlogger.html">WxLogger</a> by Ken Turner.<br>
+It uses some of Gerrit Grunwald's <a href="http://harmoniccode.blogspot.be/2010/08/java-swing-component-library.html">Steel Series</a> dials.<br>
+
+</p></td>
+</tr>
+<tr> <td>
+<br><br>
+
+
+
+<p>To allow the WxCenterServer applet to run, add the following lines to the C:\Program Files (x86)\Java\jre7\lib\security\java.policy <br>
+<br><ul>
+<li>add the following line:</li>
+<li>permission java.lang.reflect.ReflectPermission "suppressAccessChecks";<br>
+<li>permission java.util.PropertyPermission "mapAnyUriToUri", "read";</li>
+<li>permission java.lang.RuntimePermission "accessDeclaredMembers";</li>
+<li>permission java.lang.RuntimePermission "exitVM.0";</li>
+<li>set the Java control panel, security tab to Medium (allow self-signed certificates)
+
+</ul>
+ 
+<script src="http://java.com/js/deployJava.js"></script>
+<script>
+    var attributes = {codebase:'/WxCenterServer',
+                      code:'WxCenterApplet.class',
+                      archive:'WxCenter-Applet-v0.5_9.0.1.jar',
+                      width:80, height:60} ;
+    var parameters = {fontSize:16} ;
+    var version = '9.0.1' ;
+    deployJava.runApplet(attributes, parameters, version);
+</script>
+
+</td></tr></table>
+
+
+</body>
+</html>
