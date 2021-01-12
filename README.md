@@ -7,3 +7,6 @@ Deploy the wx-logger-01 (WxCenter-LoggerUDP project) on the PC connected via USB
 Start the Stand-alone app (WxCenter-Standalone\_v0.5\_9.0.1) 
 or
 Start the WxCenter-ServletApplet-v0.5\_9.0.1 on tomcat, click the link to launch the applet.
+
+This is based upon the code provided by Ken Turner:
+http://www.cs.stir.ac.uk/~kjt/software/comms/wxlogger.html
